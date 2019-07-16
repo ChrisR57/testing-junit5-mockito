@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
@@ -23,14 +24,26 @@ class SpecialitySDJpaServiceTest {
     SpecialitySDJpaService service;
 
     @Test
+    void testDeleteByObject() {
+        Speciality speciality = new Speciality();
+
+        service.delete(speciality);
+
+        verify(specialtyRepository, times(1)).delete(any(Speciality.class));
+        verify(specialtyRepository).delete(any(Speciality.class));   // this line is the default of 'times(1)'
+    }
+
+    @Test
     void testFindById() {
         Speciality speciality = new Speciality();
         when(specialtyRepository.findById(1L)).thenReturn(Optional.of(speciality));
 
         Speciality foundSpeciality = service.findById(1L);
 
+        assertThat(foundSpeciality).isNotNull();
         verify(specialtyRepository, times(1)).findById(1L);
         verify(specialtyRepository).findById(1L);   // this line is the default of 'times(1)'
+        verify(specialtyRepository).findById(anyLong());   // this line is the default of 'times(1)'
     }
 
     @Test
